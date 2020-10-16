@@ -13,6 +13,8 @@ namespace LongLapseOrganizer
 {
     public partial class Form1 : Form
     {
+        private string[] localFiles;
+
         public Form1()
         {
             InitializeComponent();
@@ -21,8 +23,9 @@ namespace LongLapseOrganizer
         private void button1_Click(object sender, EventArgs e)
         {
             folderBrowserDialog1.ShowDialog();
-            string[] files = Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.NEF");
-            Console.WriteLine("Found " + files.Length + " files");
+            localFiles = Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.NEF");
+            Console.WriteLine("Found " + localFiles.Length + " .NEF files");
+
         }
     }
 }
