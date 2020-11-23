@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             this.listView1 = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button1 = new System.Windows.Forms.Button();
             this.listView2 = new System.Windows.Forms.ListView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -48,15 +54,16 @@
             this.label4 = new System.Windows.Forms.Label();
             this.buttonLoadFilelist = new System.Windows.Forms.Button();
             this.buttonSaveFilelist = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxPicControls = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.buttonSaveIntByDay = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.labelRecordStatus = new System.Windows.Forms.Label();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxPicControls.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,14 +71,43 @@
             // 
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6});
+            this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(362, 42);
+            this.listView1.Location = new System.Drawing.Point(280, 25);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(340, 222);
+            this.listView1.Size = new System.Drawing.Size(801, 623);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Date";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "NumPics";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "First pic time";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Last pic time";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Num Selected Images";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "NumImagesByHour";
             // 
             // button1
             // 
@@ -86,9 +122,9 @@
             // listView2
             // 
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(362, 270);
+            this.listView2.Location = new System.Drawing.Point(12, 542);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(340, 106);
+            this.listView2.Size = new System.Drawing.Size(262, 106);
             this.listView2.TabIndex = 2;
             this.listView2.UseCompatibleStateImageBehavior = false;
             // 
@@ -115,7 +151,7 @@
             // 
             // richTextBoxLog
             // 
-            this.richTextBoxLog.Location = new System.Drawing.Point(12, 397);
+            this.richTextBoxLog.Location = new System.Drawing.Point(12, 654);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.Size = new System.Drawing.Size(1107, 99);
             this.richTextBoxLog.TabIndex = 6;
@@ -135,6 +171,7 @@
             this.textBoxOutputFolder.Name = "textBoxOutputFolder";
             this.textBoxOutputFolder.Size = new System.Drawing.Size(166, 20);
             this.textBoxOutputFolder.TabIndex = 8;
+            this.textBoxOutputFolder.Text = "M:\\breen_tl_out_test";
             // 
             // label1
             // 
@@ -243,23 +280,57 @@
             this.buttonSaveFilelist.UseVisualStyleBackColor = true;
             this.buttonSaveFilelist.Click += new System.EventHandler(this.buttonSaveFilelist_Click);
             // 
-            // groupBox1
+            // groupBoxPicControls
             // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.numericSkipNthFile);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.button4);
-            this.groupBox1.Controls.Add(this.textBoxOutputFileName);
-            this.groupBox1.Controls.Add(this.btnSaveList);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBoxOutputFolder);
-            this.groupBox1.Enabled = false;
-            this.groupBox1.Location = new System.Drawing.Point(12, 170);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 185);
-            this.groupBox1.TabIndex = 19;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Picture controls";
+            this.groupBoxPicControls.Controls.Add(this.numericUpDown1);
+            this.groupBoxPicControls.Controls.Add(this.buttonSaveIntByDay);
+            this.groupBoxPicControls.Controls.Add(this.label4);
+            this.groupBoxPicControls.Controls.Add(this.numericSkipNthFile);
+            this.groupBoxPicControls.Controls.Add(this.label3);
+            this.groupBoxPicControls.Controls.Add(this.button4);
+            this.groupBoxPicControls.Controls.Add(this.textBoxOutputFileName);
+            this.groupBoxPicControls.Controls.Add(this.btnSaveList);
+            this.groupBoxPicControls.Controls.Add(this.label2);
+            this.groupBoxPicControls.Controls.Add(this.textBoxOutputFolder);
+            this.groupBoxPicControls.Enabled = false;
+            this.groupBoxPicControls.Location = new System.Drawing.Point(12, 170);
+            this.groupBoxPicControls.Name = "groupBoxPicControls";
+            this.groupBoxPicControls.Size = new System.Drawing.Size(259, 319);
+            this.groupBoxPicControls.TabIndex = 19;
+            this.groupBoxPicControls.TabStop = false;
+            this.groupBoxPicControls.Text = "Picture controls";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(178, 139);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(73, 20);
+            this.numericUpDown1.TabIndex = 18;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // buttonSaveIntByDay
+            // 
+            this.buttonSaveIntByDay.Location = new System.Drawing.Point(6, 136);
+            this.buttonSaveIntByDay.Name = "buttonSaveIntByDay";
+            this.buttonSaveIntByDay.Size = new System.Drawing.Size(166, 23);
+            this.buttonSaveIntByDay.TabIndex = 17;
+            this.buttonSaveIntByDay.Text = "Save Timelapse by day";
+            this.buttonSaveIntByDay.UseVisualStyleBackColor = true;
+            this.buttonSaveIntByDay.Click += new System.EventHandler(this.buttonSaveIntervalByDay_Click);
             // 
             // groupBox2
             // 
@@ -290,36 +361,29 @@
             // labelRecordStatus
             // 
             this.labelRecordStatus.AutoSize = true;
-            this.labelRecordStatus.Location = new System.Drawing.Point(359, 26);
+            this.labelRecordStatus.Location = new System.Drawing.Point(277, 9);
             this.labelRecordStatus.Name = "labelRecordStatus";
             this.labelRecordStatus.Size = new System.Drawing.Size(97, 13);
             this.labelRecordStatus.TabIndex = 21;
             this.labelRecordStatus.Text = "No Images Loaded";
             // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Date";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "NumPics";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1131, 508);
+            this.ClientSize = new System.Drawing.Size(1131, 765);
             this.Controls.Add(this.labelRecordStatus);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBoxPicControls);
             this.Controls.Add(this.richTextBoxLog);
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.listView1);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxPicControls.ResumeLayout(false);
+            this.groupBoxPicControls.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -349,13 +413,19 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button buttonLoadFilelist;
         private System.Windows.Forms.Button buttonSaveFilelist;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxPicControls;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label labelRecordStatus;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Button buttonSaveIntByDay;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
     }
 }
 

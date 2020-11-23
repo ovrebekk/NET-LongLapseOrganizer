@@ -21,19 +21,31 @@ namespace LongLapseOrganizer
         private const int FILE_MAGIC_NUMBER = 0x12658764;
         private string[] localFiles;
         private List<ImageRecord> mImageRecordList;
-        private Dictionary<DateTime, int> mImageRecordsByDay;
+        private Dictionary<DateTime, ImagesByDaySummary> mImageRecordsByDay;
 
         public Form1()
         {
             InitializeComponent();
             localFiles = new string[0];
             mImageRecordList = new List<ImageRecord>();
-            mImageRecordsByDay = new Dictionary<DateTime, int>();
+            mImageRecordsByDay = new Dictionary<DateTime, ImagesByDaySummary>();
         }
 
         public void logMessage(String message)
         {
             richTextBoxLog.Text = message + "\r\n" + richTextBoxLog.Text;
+        }
+
+        public void createSymLink(string targetFile, string outputPath)
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C mklink \"" + outputPath + "\" \"" + targetFile + "\"";
+            startInfo.Verb = "runas";
+            process.StartInfo = startInfo;
+            process.Start();
         }
 
         public void updateImageRecordStatus()
@@ -48,25 +60,36 @@ namespace LongLapseOrganizer
                 {
                     if(mImageRecordsByDay.ContainsKey(ir.CaptureTime.Date))
                     {
-                        mImageRecordsByDay[ir.CaptureTime.Date]++;
+                        mImageRecordsByDay[ir.CaptureTime.Date].NumberOfPictures++;
+                        mImageRecordsByDay[ir.CaptureTime.Date].registerDateTime(ir.CaptureTime);
+                        mImageRecordsByDay[ir.CaptureTime.Date].addImage(ir);
                     }
                     else
                     {
-                        mImageRecordsByDay.Add(ir.CaptureTime.Date, 1);
+                        ImagesByDaySummary summary = new ImagesByDaySummary(ir.CaptureTime);
+                        summary.addImage(ir);
+                        mImageRecordsByDay.Add(ir.CaptureTime.Date, summary);
                     }
                 }
                 listView1.Items.Clear();
-                foreach(KeyValuePair<DateTime, int> entry in mImageRecordsByDay)
+                foreach(KeyValuePair<DateTime, ImagesByDaySummary> entry in mImageRecordsByDay)
                 {
-                    string[] newListStrings = new string[2];
+                    string[] newListStrings = new string[6];
                     newListStrings[0] = entry.Key.ToShortDateString();
-                    newListStrings[1] = entry.Value.ToString();
+                    newListStrings[1] = entry.Value.NumberOfPictures.ToString();
+                    newListStrings[2] = entry.Value.FirstTime.ToShortTimeString();
+                    newListStrings[3] = entry.Value.LastTime.ToShortTimeString();
+                    newListStrings[4] = entry.Value.SelectedImages.Count.ToString();
+                    newListStrings[5] = entry.Value.getNumImagesByHourString();
                     listView1.Items.Add(new ListViewItem(newListStrings));
                 }
+
+                groupBoxPicControls.Enabled = true;
             }
             else
             {
                 labelRecordStatus.Text = "No images loaded";
+                groupBoxPicControls.Enabled = false;
             }
         }
 
@@ -221,6 +244,97 @@ namespace LongLapseOrganizer
                 }
             }
         }
+
+        private void buttonSaveIntervalByDay_Click(object sender, EventArgs e)
+        {
+            int limitInt = 0;
+            string standardFileName = "brtest_";
+            if (textBoxOutputFolder.Text != null && textBoxOutputFolder.Text != "")
+            {
+                foreach (KeyValuePair<DateTime, ImagesByDaySummary> dayEntry in mImageRecordsByDay)
+                {
+                    if (dayEntry.Value.SelectedImages.Count > 10)
+                    {
+                        string dayDirectory = textBoxOutputFolder.Text + "\\" + dayEntry.Key.ToString("yy_MM_dd");
+                        System.IO.Directory.CreateDirectory(dayDirectory);
+                        int imageIndex = 1;
+                        foreach(ImageRecord selectedImage in dayEntry.Value.SelectedImages)
+                        {
+                            createSymLink(selectedImage.FileName, 
+                                          dayDirectory + "\\" + standardFileName + selectedImage.CaptureTime.ToString("yy_MM_dd_") + 
+                                            imageIndex.ToString("0000") + ".NEF");
+                            imageIndex++;
+                            //if (limitInt++ > 600) return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class ImagesByDaySummary
+    {
+        public DateTime Day;
+        public DateTime FirstTime;
+        public DateTime LastTime;
+        public int NumberOfPictures;
+        public List<ImageRecord> SelectedImages;
+        public int []numImagesByHour = new int[24];
+
+        // Static selection variables
+        public static int SelectedStartHour = 8;
+        public static int SelectedEndHour = 17;
+        public static int SelectedMinIntervalSeconds = 60;
+        private static ImageRecord SelectedPreviousImageRecord = null;
+
+        public ImagesByDaySummary(DateTime imageDT)
+        {
+            NumberOfPictures = 1;
+            FirstTime = imageDT;
+            LastTime = imageDT;
+            SelectedImages = new List<ImageRecord>();
+            for (int i = 0; i < 24; i++) numImagesByHour[i] = 0;
+            registerDateTime(imageDT);
+        }
+
+        public void registerDateTime(DateTime imageDT)
+        {
+            if (FirstTime > imageDT) FirstTime = imageDT;
+            if (LastTime < imageDT) LastTime = imageDT;
+            numImagesByHour[imageDT.Hour]++;
+        }
+
+        public void addImage(ImageRecord ir)
+        {
+            if(ir.CaptureTime.Hour >= SelectedStartHour && ir.CaptureTime.Hour < SelectedEndHour)
+            {
+                if (SelectedPreviousImageRecord != null)
+                {
+                    if (Math.Abs((SelectedPreviousImageRecord.CaptureTime - ir.CaptureTime).TotalSeconds) > (double)SelectedMinIntervalSeconds)
+                    {
+                        SelectedImages.Add(ir);
+                        SelectedPreviousImageRecord = ir;
+                    }
+                }
+                else
+                {
+                    SelectedImages.Add(ir);
+                    SelectedPreviousImageRecord = ir;
+                }
+            }
+        }
+
+        public string getNumImagesByHourString()
+        {
+            string returnString = "";
+            for(int i = 0; i < 23; i++)
+            {
+                returnString += numImagesByHour[i].ToString();
+                returnString += "-";
+            }
+            returnString += numImagesByHour[23].ToString();
+            return returnString;
+        }
     }
 
     public class ImageRecord : IComparable<ImageRecord>
@@ -290,6 +404,7 @@ namespace LongLapseOrganizer
             if(inputStream.Read(name, 0, BitConverter.ToUInt16(nameLength, 0)) == 0) return null;
             newImageRecord.Active = (active[0] != 0);
             newImageRecord.CaptureTime = DateTime.FromBinary(BitConverter.ToInt64(dateTime, 0));
+            newImageRecord.CaptureTime = newImageRecord.CaptureTime.AddHours(11);
             newImageRecord.FileName = System.Text.Encoding.Default.GetString(name);
             return newImageRecord;
         }
