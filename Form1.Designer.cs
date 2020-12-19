@@ -61,10 +61,24 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.labelRecordStatus = new System.Windows.Forms.Label();
+            this.groupBoxDaySettings = new System.Windows.Forms.GroupBox();
+            this.numericDayCfgEndMinute = new System.Windows.Forms.NumericUpDown();
+            this.numericDayCfgEndHour = new System.Windows.Forms.NumericUpDown();
+            this.numericDayCfgStartMinute = new System.Windows.Forms.NumericUpDown();
+            this.numericDayCfgStartHour = new System.Windows.Forms.NumericUpDown();
+            this.numericDayCfgIntSec = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxDayCfgActive = new System.Windows.Forms.CheckBox();
+            this.buttonRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBoxDaySettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgEndMinute)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgEndHour)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartMinute)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartHour)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgIntSec)).BeginInit();
             this.SuspendLayout();
             // 
             // listView1
@@ -80,10 +94,11 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(280, 25);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(801, 623);
+            this.listView1.Size = new System.Drawing.Size(801, 593);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -295,7 +310,7 @@
             this.groupBoxPicControls.Enabled = false;
             this.groupBoxPicControls.Location = new System.Drawing.Point(12, 170);
             this.groupBoxPicControls.Name = "groupBoxPicControls";
-            this.groupBoxPicControls.Size = new System.Drawing.Size(259, 319);
+            this.groupBoxPicControls.Size = new System.Drawing.Size(259, 172);
             this.groupBoxPicControls.TabIndex = 19;
             this.groupBoxPicControls.TabStop = false;
             this.groupBoxPicControls.Text = "Picture controls";
@@ -367,11 +382,124 @@
             this.labelRecordStatus.TabIndex = 21;
             this.labelRecordStatus.Text = "No Images Loaded";
             // 
+            // groupBoxDaySettings
+            // 
+            this.groupBoxDaySettings.Controls.Add(this.numericDayCfgEndMinute);
+            this.groupBoxDaySettings.Controls.Add(this.numericDayCfgEndHour);
+            this.groupBoxDaySettings.Controls.Add(this.numericDayCfgStartMinute);
+            this.groupBoxDaySettings.Controls.Add(this.numericDayCfgStartHour);
+            this.groupBoxDaySettings.Controls.Add(this.numericDayCfgIntSec);
+            this.groupBoxDaySettings.Controls.Add(this.checkBoxDayCfgActive);
+            this.groupBoxDaySettings.Location = new System.Drawing.Point(12, 348);
+            this.groupBoxDaySettings.Name = "groupBoxDaySettings";
+            this.groupBoxDaySettings.Size = new System.Drawing.Size(259, 188);
+            this.groupBoxDaySettings.TabIndex = 22;
+            this.groupBoxDaySettings.TabStop = false;
+            this.groupBoxDaySettings.Text = "Day Settings";
+            // 
+            // numericDayCfgEndMinute
+            // 
+            this.numericDayCfgEndMinute.Location = new System.Drawing.Point(166, 92);
+            this.numericDayCfgEndMinute.Maximum = new decimal(new int[] {
+            59,
+            0,
+            0,
+            0});
+            this.numericDayCfgEndMinute.Name = "numericDayCfgEndMinute";
+            this.numericDayCfgEndMinute.Size = new System.Drawing.Size(38, 20);
+            this.numericDayCfgEndMinute.TabIndex = 5;
+            this.numericDayCfgEndMinute.ValueChanged += new System.EventHandler(this.numericDayCfgEndHour_ValueChanged);
+            // 
+            // numericDayCfgEndHour
+            // 
+            this.numericDayCfgEndHour.Location = new System.Drawing.Point(122, 92);
+            this.numericDayCfgEndHour.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+            this.numericDayCfgEndHour.Name = "numericDayCfgEndHour";
+            this.numericDayCfgEndHour.Size = new System.Drawing.Size(38, 20);
+            this.numericDayCfgEndHour.TabIndex = 4;
+            this.numericDayCfgEndHour.Value = new decimal(new int[] {
+            18,
+            0,
+            0,
+            0});
+            this.numericDayCfgEndHour.ValueChanged += new System.EventHandler(this.numericDayCfgEndHour_ValueChanged);
+            // 
+            // numericDayCfgStartMinute
+            // 
+            this.numericDayCfgStartMinute.Location = new System.Drawing.Point(50, 92);
+            this.numericDayCfgStartMinute.Maximum = new decimal(new int[] {
+            59,
+            0,
+            0,
+            0});
+            this.numericDayCfgStartMinute.Name = "numericDayCfgStartMinute";
+            this.numericDayCfgStartMinute.Size = new System.Drawing.Size(38, 20);
+            this.numericDayCfgStartMinute.TabIndex = 3;
+            this.numericDayCfgStartMinute.ValueChanged += new System.EventHandler(this.numericDayCfgStartHour_ValueChanged);
+            // 
+            // numericDayCfgStartHour
+            // 
+            this.numericDayCfgStartHour.Location = new System.Drawing.Point(6, 92);
+            this.numericDayCfgStartHour.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+            this.numericDayCfgStartHour.Name = "numericDayCfgStartHour";
+            this.numericDayCfgStartHour.Size = new System.Drawing.Size(38, 20);
+            this.numericDayCfgStartHour.TabIndex = 2;
+            this.numericDayCfgStartHour.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.numericDayCfgStartHour.ValueChanged += new System.EventHandler(this.numericDayCfgStartHour_ValueChanged);
+            // 
+            // numericDayCfgIntSec
+            // 
+            this.numericDayCfgIntSec.Location = new System.Drawing.Point(6, 51);
+            this.numericDayCfgIntSec.Name = "numericDayCfgIntSec";
+            this.numericDayCfgIntSec.Size = new System.Drawing.Size(93, 20);
+            this.numericDayCfgIntSec.TabIndex = 1;
+            this.numericDayCfgIntSec.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericDayCfgIntSec.ValueChanged += new System.EventHandler(this.numericDayCfgIntSec_ValueChanged);
+            // 
+            // checkBoxDayCfgActive
+            // 
+            this.checkBoxDayCfgActive.AutoSize = true;
+            this.checkBoxDayCfgActive.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxDayCfgActive.Name = "checkBoxDayCfgActive";
+            this.checkBoxDayCfgActive.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxDayCfgActive.TabIndex = 0;
+            this.checkBoxDayCfgActive.Text = "Active";
+            this.checkBoxDayCfgActive.UseVisualStyleBackColor = true;
+            this.checkBoxDayCfgActive.CheckedChanged += new System.EventHandler(this.checkBoxDayCfgActive_CheckedChanged);
+            // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Location = new System.Drawing.Point(281, 624);
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(93, 23);
+            this.buttonRefresh.TabIndex = 23;
+            this.buttonRefresh.Text = "buttonRefresh";
+            this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1131, 765);
+            this.Controls.Add(this.buttonRefresh);
+            this.Controls.Add(this.groupBoxDaySettings);
             this.Controls.Add(this.labelRecordStatus);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBoxPicControls);
@@ -386,6 +514,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBoxDaySettings.ResumeLayout(false);
+            this.groupBoxDaySettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgEndMinute)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgEndHour)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartMinute)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartHour)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgIntSec)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -426,6 +561,14 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.GroupBox groupBoxDaySettings;
+        private System.Windows.Forms.NumericUpDown numericDayCfgEndMinute;
+        private System.Windows.Forms.NumericUpDown numericDayCfgEndHour;
+        private System.Windows.Forms.NumericUpDown numericDayCfgStartMinute;
+        private System.Windows.Forms.NumericUpDown numericDayCfgStartHour;
+        private System.Windows.Forms.NumericUpDown numericDayCfgIntSec;
+        private System.Windows.Forms.CheckBox checkBoxDayCfgActive;
+        private System.Windows.Forms.Button buttonRefresh;
     }
 }
 
