@@ -19,7 +19,9 @@ namespace LongLapseOrganizer
     public partial class Form1 : Form
     {
         private const int FILE_MAGIC_NUMBER = 0x12658764;
+        private const int FILE_DAYCFG_MAGIC_NUMBER = 0x63B25FA3;
         private string[] localFiles;
+        private string openImageFile = "";
         private List<ImageRecord> mImageRecordList;
         private Dictionary<DateTime, ImagesByDaySummary> mImageRecordsByDay;
         private ImagesByDaySummary mSelectedDay = null;
@@ -53,6 +55,8 @@ namespace LongLapseOrganizer
         {
             if (mImageRecordList.Count > 0)
             {
+                int selectedImagesTotal = 0;
+
                 labelRecordStatus.Text = mImageRecordList.Count.ToString() + " records loaded";
 
                 // Update map
@@ -71,11 +75,13 @@ namespace LongLapseOrganizer
                         {
                             ImagesByDaySummary summary = new ImagesByDaySummary(ir.CaptureTime);
                             summary.addImage(ir);
+                            summary.Day = ir.CaptureTime.Date;
                             mImageRecordsByDay.Add(ir.CaptureTime.Date, summary);
                         }
                     }
 
                     groupBoxPicControls.Enabled = true;
+                    groupBoxDaySettings.Enabled = true;
                 }
                 else
                 {
@@ -93,25 +99,32 @@ namespace LongLapseOrganizer
                 listView1.Items.Clear();
                 foreach (KeyValuePair<DateTime, ImagesByDaySummary> entry in mImageRecordsByDay)
                 {
-                    if (entry.Value.CfgActive)
+                    if (checkBoxShowInactive.Checked || entry.Value.CfgActive)
                     {
-                        string[] newListStrings = new string[6];
+                        string[] newListStrings = new string[10];
                         newListStrings[0] = entry.Key.ToShortDateString();
                         newListStrings[1] = entry.Value.NumberOfPictures.ToString();
                         newListStrings[2] = entry.Value.FirstTime.ToShortTimeString();
                         newListStrings[3] = entry.Value.LastTime.ToShortTimeString();
                         newListStrings[4] = entry.Value.SelectedImages.Count.ToString();
-                        newListStrings[5] = entry.Value.getNumImagesByHourString();
+                        newListStrings[5] = entry.Value.CfgActive ? "Yes" : "-";
+                        newListStrings[6] = entry.Value.CfgIntervalSec.ToString();
+                        newListStrings[7] = entry.Value.CfgStartTime.ToString();
+                        newListStrings[8] = entry.Value.CfgEndTime.ToString();
+                        newListStrings[9] = entry.Value.getNumImagesByHourString();
                         ListViewItem listViewItem = new ListViewItem(newListStrings);
                         listViewItem.Tag = entry.Value;
                         listView1.Items.Add(listViewItem);
                     }
+                    if (entry.Value.CfgActive) selectedImagesTotal += entry.Value.SelectedImages.Count;
                 }
+                labelTotalSelectedFiles.Text = "Total selected files: " + selectedImagesTotal.ToString();
             }
             else
             {
                 labelRecordStatus.Text = "No images loaded";
                 groupBoxPicControls.Enabled = false;
+                groupBoxDaySettings.Enabled = false;
             }
         }
 
@@ -239,6 +252,7 @@ namespace LongLapseOrganizer
             if(openFileDialog1.FileName != null)
             {
                 logMessage("Loading " + openFileDialog1.FileName);
+                openImageFile = openFileDialog1.FileName;
                 byte[] fileData = File.ReadAllBytes(openFileDialog1.FileName);
 
                 if(BitConverter.ToInt32(fileData, 0) == FILE_MAGIC_NUMBER)
@@ -367,6 +381,66 @@ namespace LongLapseOrganizer
         {
             updateImageRecordStatus(false);
         }
+
+        private void buttonSetAllActive_Click(object sender, EventArgs e)
+        {
+            foreach (KeyValuePair<DateTime, ImagesByDaySummary> entry in mImageRecordsByDay)
+            {
+                entry.Value.CfgActive = true;
+            }
+            updateImageRecordStatus(false);
+        }
+
+        private void checkBoxShowInactive_CheckedChanged(object sender, EventArgs e)
+        {
+            updateImageRecordStatus(false);
+        }
+
+        private void buttonSaveSettingsToFile_Click(object sender, EventArgs e)
+        {
+            if(comboBox1.Text != null && comboBox1.Text != "")
+            {
+                string daySettingFile = Path.GetDirectoryName(openImageFile) + "\\" + comboBox1.Text +
+                                        ".llods";
+
+                logMessage("Storing day settings to: " + daySettingFile);
+                using (FileStream fs = File.OpenWrite(daySettingFile))
+                {
+                    fs.Write(BitConverter.GetBytes(FILE_DAYCFG_MAGIC_NUMBER), 0, 4);
+                    foreach (KeyValuePair<DateTime, ImagesByDaySummary> entry in mImageRecordsByDay)
+                    {
+                        fs.Write(entry.Value.getDaySettingBytes(), 0, 20);        
+                    }
+                }
+            }
+        }
+
+        private void buttonLoadSettings_Click(object sender, EventArgs e)
+        {
+            openFileDlgDayCfgSettings.InitialDirectory = Path.GetDirectoryName(openImageFile);
+            openFileDlgDayCfgSettings.ShowDialog();
+            if(openFileDlgDayCfgSettings.FileName != null && openFileDlgDayCfgSettings.FileName != "")
+            {
+                using (FileStream fs = File.OpenRead(openFileDlgDayCfgSettings.FileName))
+                {
+                    byte [] magicNumber = new byte[4];
+                    byte[] dayCfgBuffer = new byte[20];
+                    fs.Read(magicNumber, 0, 4);
+                    if(BitConverter.ToInt32(magicNumber, 0) == FILE_DAYCFG_MAGIC_NUMBER)
+                    {
+                        while(fs.Read(dayCfgBuffer, 0, 20) == 20)
+                        {
+                            DateTime day = DateTime.FromBinary(BitConverter.ToInt64(dayCfgBuffer, 0));
+                            if(mImageRecordsByDay.ContainsKey(day))
+                            {
+                                mImageRecordsByDay[day].loadDaySettingsFromBytes(dayCfgBuffer);
+                            }
+                        }
+                        updateImageRecordStatus(false);
+                    }
+                }
+            }
+        }
     }
 
     public class ImagesByDaySummary
@@ -449,6 +523,25 @@ namespace LongLapseOrganizer
             }
             returnString += numImagesByHour[23].ToString();
             return returnString;
+        }
+
+        public byte [] getDaySettingBytes()
+        {
+            byte[] retBytes = new byte[20];
+            BitConverter.GetBytes(Day.Ticks).CopyTo(retBytes, 0);
+            retBytes[8] = (byte)(CfgActive ? 1 : 0);
+            BitConverter.GetBytes((int)CfgIntervalSec).CopyTo(retBytes, 12);
+            BitConverter.GetBytes((short)CfgStartTime).CopyTo(retBytes, 16);
+            BitConverter.GetBytes((short)CfgEndTime).CopyTo(retBytes, 18);
+            return retBytes;
+        }
+
+        public void loadDaySettingsFromBytes(byte[] rawBuffer)
+        {
+            CfgActive = (rawBuffer[8] > 0);
+            CfgIntervalSec = BitConverter.ToInt32(rawBuffer, 12);
+            CfgStartTime = BitConverter.ToInt16(rawBuffer, 16);
+            CfgEndTime = BitConverter.ToInt16(rawBuffer, 18);
         }
     }
 
