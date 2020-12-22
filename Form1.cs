@@ -94,6 +94,8 @@ namespace LongLapseOrganizer
                         mImageRecordsByDay[ir.CaptureTime.Date].addImage(ir);
                     }
                 }
+                int selectedIndex = -1;
+                if (listViewMain.SelectedItems.Count == 1) selectedIndex = listViewMain.SelectedIndices[0];
                 listViewMain.Items.Clear();
                 foreach (KeyValuePair<DateTime, ImagesByDaySummary> entry in mImageRecordsByDay)
                 {
@@ -104,6 +106,11 @@ namespace LongLapseOrganizer
                         listViewMain.Items.Add(listViewItem);
                     }
                     if (entry.Value.CfgActive) selectedImagesTotal += entry.Value.SelectedImages.Count;
+                }
+                if (selectedIndex != -1)
+                {
+                    listViewMain.Items[selectedIndex].Selected = true;
+                    listViewMain.EnsureVisible(selectedIndex);
                 }
                 labelTotalSelectedFiles.Text = "Total selected files: " + selectedImagesTotal.ToString();
             }
@@ -326,20 +333,20 @@ namespace LongLapseOrganizer
                 mSelectedDay = daySummary;
                 checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
                     numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = true;
-                groupBoxDaySettings.Text = "Day Settings - " + daySummary.FirstTime.ToShortDateString();
+                labelDaySelected.Text = daySummary.FirstTime.ToShortDateString();
             }
             else if(listViewMain.SelectedItems.Count > 1)
             {
                 checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
                     numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = true;
-                groupBoxDaySettings.Text = "Day settings - multiple selected";
+                labelDaySelected.Text = listViewMain.SelectedItems.Count.ToString() + " days selected";
             }
             else // No items selected
             {
                 mSelectedDay = null;
                 checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
                     numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = false;
-                groupBoxDaySettings.Text = "Day Settings";
+                labelDaySelected.Text = "-";
             }
         }
 
@@ -469,6 +476,7 @@ namespace LongLapseOrganizer
                     {
                         listViewMain.Items[index].Selected = false;
                         listViewMain.Items[index - 1].Selected = true;
+                        listViewMain.EnsureVisible(index - 1);
                     }
                 }
             }
@@ -481,7 +489,23 @@ namespace LongLapseOrganizer
                     {
                         listViewMain.Items[index].Selected = false;
                         listViewMain.Items[index + 1].Selected = true;
+                        listViewMain.EnsureVisible(index + 1);
                     }
+                }
+            }
+        }
+
+        private void buttonLoadImages_Click(object sender, EventArgs e)
+        {
+            if(listViewMain.SelectedItems.Count == 1)
+            {
+                listViewImages.Items.Clear();
+                ImagesByDaySummary summary = (ImagesByDaySummary)listViewMain.SelectedItems[0].Tag;
+                DateTime prevImageDateTime = DateTime.MinValue;
+                foreach (ImageRecord ir in summary.AllImages)
+                {
+                    listViewImages.Items.Add(new ListViewItem(ir.getListStrings(prevImageDateTime)));
+                    prevImageDateTime = ir.CaptureTime;
                 }
             }
         }
@@ -501,6 +525,7 @@ namespace LongLapseOrganizer
 
         public int NumberOfPictures;
         public List<ImageRecord> SelectedImages;
+        public List<ImageRecord> AllImages;
         public int []numImagesByHour = new int[24];
 
         // Static selection variables
@@ -520,6 +545,7 @@ namespace LongLapseOrganizer
             CfgIntervalSec = 60;
 
             SelectedImages = new List<ImageRecord>();
+            AllImages = new List<ImageRecord>();
             for (int i = 0; i < 24; i++) numImagesByHour[i] = 0;
             registerDateTime(imageDT);
         }
@@ -550,11 +576,13 @@ namespace LongLapseOrganizer
                     SelectedPreviousImageRecord = ir;
                 }
             }
+            AllImages.Add(ir);
         }
 
         public void clearImages()
         {
             SelectedImages.Clear();
+            AllImages.Clear();
         }
 
         public string getNumImagesByHourString()
@@ -651,6 +679,16 @@ namespace LongLapseOrganizer
             BitConverter.GetBytes((UInt16)(mFileName.Length)).CopyTo(returnArray, 9);
             Encoding.ASCII.GetBytes(mFileName).CopyTo(returnArray, 11);
             return returnArray;
+        }
+
+        public string [] getListStrings(DateTime lastPicTimestamp)
+        {
+            string[] retStrings = new string[3];
+            retStrings[0] = mDateTime.ToString("HH:mm:ss");
+            if (lastPicTimestamp != DateTime.MinValue) retStrings[1] = ((int)((mDateTime.Ticks - lastPicTimestamp.Ticks) / 10000000)).ToString();
+            else retStrings[1] = "-";
+            retStrings[2] = mFileName;
+            return retStrings;
         }
 
         // Sorting

@@ -65,6 +65,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.labelRecordStatus = new System.Windows.Forms.Label();
             this.groupBoxDaySettings = new System.Windows.Forms.GroupBox();
+            this.labelDaySelected = new System.Windows.Forms.Label();
             this.buttonSaveSettingsToFile = new System.Windows.Forms.Button();
             this.comboBoxDaySettingFiles = new System.Windows.Forms.ComboBox();
             this.numericDayCfgEndMinute = new System.Windows.Forms.NumericUpDown();
@@ -78,6 +79,11 @@
             this.checkBoxShowInactive = new System.Windows.Forms.CheckBox();
             this.labelTotalSelectedFiles = new System.Windows.Forms.Label();
             this.openFileDlgDayCfgSettings = new System.Windows.Forms.OpenFileDialog();
+            this.listViewImages = new System.Windows.Forms.ListView();
+            this.colHdrTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colHdrInterval = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colHdrFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.buttonLoadImages = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -106,7 +112,7 @@
             this.listViewMain.HideSelection = false;
             this.listViewMain.Location = new System.Drawing.Point(280, 25);
             this.listViewMain.Name = "listViewMain";
-            this.listViewMain.Size = new System.Drawing.Size(839, 593);
+            this.listViewMain.Size = new System.Drawing.Size(483, 593);
             this.listViewMain.TabIndex = 0;
             this.listViewMain.UseCompatibleStateImageBehavior = false;
             this.listViewMain.View = System.Windows.Forms.View.Details;
@@ -140,14 +146,17 @@
             // columnHeader8
             // 
             this.columnHeader8.Text = "Int.";
+            this.columnHeader8.Width = 40;
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "StartTime";
+            this.columnHeader9.Text = "STime";
+            this.columnHeader9.Width = 45;
             // 
             // columnHeader10
             // 
-            this.columnHeader10.Text = "EndTime";
+            this.columnHeader10.Text = "ETime";
+            this.columnHeader10.Width = 45;
             // 
             // columnHeader6
             // 
@@ -198,7 +207,7 @@
             // 
             this.richTextBoxLog.Location = new System.Drawing.Point(12, 654);
             this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.Size = new System.Drawing.Size(1107, 99);
+            this.richTextBoxLog.Size = new System.Drawing.Size(1288, 99);
             this.richTextBoxLog.TabIndex = 6;
             this.richTextBoxLog.Text = "";
             // 
@@ -391,6 +400,7 @@
             // 
             // groupBoxDaySettings
             // 
+            this.groupBoxDaySettings.Controls.Add(this.labelDaySelected);
             this.groupBoxDaySettings.Controls.Add(this.buttonSaveSettingsToFile);
             this.groupBoxDaySettings.Controls.Add(this.comboBoxDaySettingFiles);
             this.groupBoxDaySettings.Controls.Add(this.numericDayCfgEndMinute);
@@ -406,6 +416,15 @@
             this.groupBoxDaySettings.TabIndex = 22;
             this.groupBoxDaySettings.TabStop = false;
             this.groupBoxDaySettings.Text = "Day Settings";
+            // 
+            // labelDaySelected
+            // 
+            this.labelDaySelected.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.labelDaySelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDaySelected.Location = new System.Drawing.Point(6, 45);
+            this.labelDaySelected.Name = "labelDaySelected";
+            this.labelDaySelected.Size = new System.Drawing.Size(247, 23);
+            this.labelDaySelected.TabIndex = 27;
             // 
             // buttonSaveSettingsToFile
             // 
@@ -575,11 +594,51 @@
             this.openFileDlgDayCfgSettings.FileName = "openFileDialog2";
             this.openFileDlgDayCfgSettings.Filter = "LongLapse file list|*.llods";
             // 
+            // listViewImages
+            // 
+            this.listViewImages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colHdrTime,
+            this.colHdrInterval,
+            this.colHdrFilename});
+            this.listViewImages.FullRowSelect = true;
+            this.listViewImages.HideSelection = false;
+            this.listViewImages.Location = new System.Drawing.Point(769, 25);
+            this.listViewImages.Name = "listViewImages";
+            this.listViewImages.Size = new System.Drawing.Size(531, 564);
+            this.listViewImages.TabIndex = 27;
+            this.listViewImages.UseCompatibleStateImageBehavior = false;
+            this.listViewImages.View = System.Windows.Forms.View.Details;
+            // 
+            // colHdrTime
+            // 
+            this.colHdrTime.Text = "Time";
+            // 
+            // colHdrInterval
+            // 
+            this.colHdrInterval.Text = "IntervalSec";
+            // 
+            // colHdrFilename
+            // 
+            this.colHdrFilename.Text = "Filename";
+            this.colHdrFilename.Width = 360;
+            // 
+            // buttonLoadImages
+            // 
+            this.buttonLoadImages.Location = new System.Drawing.Point(769, 595);
+            this.buttonLoadImages.Name = "buttonLoadImages";
+            this.buttonLoadImages.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadImages.TabIndex = 18;
+            this.buttonLoadImages.Text = "Load Images";
+            this.buttonLoadImages.UseVisualStyleBackColor = true;
+            this.buttonLoadImages.Click += new System.EventHandler(this.buttonLoadImages_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1131, 765);
+            this.ClientSize = new System.Drawing.Size(1311, 765);
+            this.Controls.Add(this.buttonLoadImages);
+            this.Controls.Add(this.listViewImages);
             this.Controls.Add(this.labelTotalSelectedFiles);
             this.Controls.Add(this.checkBoxShowInactive);
             this.Controls.Add(this.buttonSetAllActive);
@@ -664,6 +723,12 @@
         private System.Windows.Forms.ComboBox comboBoxDaySettingFiles;
         private System.Windows.Forms.Button buttonSaveSettingsToFile;
         private System.Windows.Forms.OpenFileDialog openFileDlgDayCfgSettings;
+        private System.Windows.Forms.Label labelDaySelected;
+        private System.Windows.Forms.ListView listViewImages;
+        private System.Windows.Forms.ColumnHeader colHdrTime;
+        private System.Windows.Forms.ColumnHeader colHdrInterval;
+        private System.Windows.Forms.ColumnHeader colHdrFilename;
+        private System.Windows.Forms.Button buttonLoadImages;
     }
 }
 
