@@ -461,9 +461,11 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(247, 21);
             this.comboBox1.TabIndex = 27;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // numericDayCfgEndMinute
             // 
+            this.numericDayCfgEndMinute.Enabled = false;
             this.numericDayCfgEndMinute.Location = new System.Drawing.Point(166, 161);
             this.numericDayCfgEndMinute.Maximum = new decimal(new int[] {
             59,
@@ -477,6 +479,7 @@
             // 
             // numericDayCfgEndHour
             // 
+            this.numericDayCfgEndHour.Enabled = false;
             this.numericDayCfgEndHour.Location = new System.Drawing.Point(122, 161);
             this.numericDayCfgEndHour.Maximum = new decimal(new int[] {
             24,
@@ -495,6 +498,7 @@
             // 
             // numericDayCfgStartMinute
             // 
+            this.numericDayCfgStartMinute.Enabled = false;
             this.numericDayCfgStartMinute.Location = new System.Drawing.Point(50, 161);
             this.numericDayCfgStartMinute.Maximum = new decimal(new int[] {
             59,
@@ -508,6 +512,7 @@
             // 
             // numericDayCfgStartHour
             // 
+            this.numericDayCfgStartHour.Enabled = false;
             this.numericDayCfgStartHour.Location = new System.Drawing.Point(6, 161);
             this.numericDayCfgStartHour.Maximum = new decimal(new int[] {
             23,
@@ -526,6 +531,7 @@
             // 
             // numericDayCfgIntSec
             // 
+            this.numericDayCfgIntSec.Enabled = false;
             this.numericDayCfgIntSec.Location = new System.Drawing.Point(6, 135);
             this.numericDayCfgIntSec.Maximum = new decimal(new int[] {
             86400,
@@ -550,6 +556,7 @@
             // checkBoxDayCfgActive
             // 
             this.checkBoxDayCfgActive.AutoSize = true;
+            this.checkBoxDayCfgActive.Enabled = false;
             this.checkBoxDayCfgActive.Location = new System.Drawing.Point(6, 112);
             this.checkBoxDayCfgActive.Name = "checkBoxDayCfgActive";
             this.checkBoxDayCfgActive.Size = new System.Drawing.Size(56, 17);

@@ -249,7 +249,7 @@ namespace LongLapseOrganizer
         private void buttonLoadFilelist_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
-            if(openFileDialog1.FileName != null)
+            if(openFileDialog1.FileName != null && openFileDialog1.FileName != "")
             {
                 logMessage("Loading " + openFileDialog1.FileName);
                 openImageFile = openFileDialog1.FileName;
@@ -275,17 +275,35 @@ namespace LongLapseOrganizer
                             }
                         }
                     }
+                    
                     logMessage(mImageRecordList.Count.ToString() + " records loaded.");
+                    
                     updateImageRecordStatus(true);
+                    
+                    // Populate combobox of day setting files based on files in the same directory
+                    comboBox1.Items.Clear();
+                    string[] daySettingFiles = System.IO.Directory.GetFiles(Path.GetDirectoryName(openFileDialog1.FileName), 
+                                                                            "*.llods", SearchOption.AllDirectories);
+                    foreach (String file in daySettingFiles)
+                    {
+                        comboBox1.Items.Add(Path.GetFileNameWithoutExtension(file));
+                    }
                 }
             }
         }
 
         private void buttonSaveIntervalByDay_Click(object sender, EventArgs e)
         {
-            int limitInt = 0;
             string standardFileName = "brtest_";
-            if (textBoxOutputFolder.Text != null && textBoxOutputFolder.Text != "")
+            if (textBoxOutputFolder.Text == null || textBoxOutputFolder.Text == "")
+            {
+                logMessage("Error: No output directory provided!");
+            }
+            else if(!System.IO.Directory.Exists(textBoxOutputFolder.Text))
+            {
+                logMessage("Error: Output directory doesn't exist!");
+            }
+            else
             {
                 foreach (KeyValuePair<DateTime, ImagesByDaySummary> dayEntry in mImageRecordsByDay)
                 {
@@ -296,11 +314,10 @@ namespace LongLapseOrganizer
                         int imageIndex = 1;
                         foreach(ImageRecord selectedImage in dayEntry.Value.SelectedImages)
                         {
-                            createSymLink(selectedImage.FileName, 
+                            createSymLink(selectedImage.FileName,   
                                           dayDirectory + "\\" + standardFileName + selectedImage.CaptureTime.ToString("yy_MM_dd_") + 
                                             imageIndex.ToString("0000") + ".NEF");
                             imageIndex++;
-                            //if (limitInt++ > 600) return;
                         }
                     }
                 }
@@ -320,11 +337,21 @@ namespace LongLapseOrganizer
                 numericDayCfgEndMinute.Value = daySummary.CfgEndTime % 100;
 
                 mSelectedDay = daySummary;
+                checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
+                    numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = true;
                 groupBoxDaySettings.Text = "Day Settings - " + daySummary.FirstTime.ToShortDateString();
             }
-            else if(listView1.SelectedItems.Count == 0)
+            else if(listView1.SelectedItems.Count > 1)
+            {
+                checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
+                    numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = true;
+                groupBoxDaySettings.Text = "Day settings - multiple selected";
+            }
+            else // No items selected
             {
                 mSelectedDay = null;
+                checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
+                    numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = false;
                 groupBoxDaySettings.Text = "Day Settings";
             }
         }
@@ -417,27 +444,29 @@ namespace LongLapseOrganizer
 
         private void buttonLoadSettings_Click(object sender, EventArgs e)
         {
-            openFileDlgDayCfgSettings.InitialDirectory = Path.GetDirectoryName(openImageFile);
-            openFileDlgDayCfgSettings.ShowDialog();
-            if(openFileDlgDayCfgSettings.FileName != null && openFileDlgDayCfgSettings.FileName != "")
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string dayCfgSettingFile = Path.GetDirectoryName(openImageFile) + "\\" + comboBox1.Text + ".llods";
+            using (FileStream fs = File.OpenRead(dayCfgSettingFile))
             {
-                using (FileStream fs = File.OpenRead(openFileDlgDayCfgSettings.FileName))
+                byte[] magicNumber = new byte[4];
+                byte[] dayCfgBuffer = new byte[20];
+                fs.Read(magicNumber, 0, 4);
+                if (BitConverter.ToInt32(magicNumber, 0) == FILE_DAYCFG_MAGIC_NUMBER)
                 {
-                    byte [] magicNumber = new byte[4];
-                    byte[] dayCfgBuffer = new byte[20];
-                    fs.Read(magicNumber, 0, 4);
-                    if(BitConverter.ToInt32(magicNumber, 0) == FILE_DAYCFG_MAGIC_NUMBER)
+                    while (fs.Read(dayCfgBuffer, 0, 20) == 20)
                     {
-                        while(fs.Read(dayCfgBuffer, 0, 20) == 20)
+                        DateTime day = DateTime.FromBinary(BitConverter.ToInt64(dayCfgBuffer, 0));
+                        if (mImageRecordsByDay.ContainsKey(day))
                         {
-                            DateTime day = DateTime.FromBinary(BitConverter.ToInt64(dayCfgBuffer, 0));
-                            if(mImageRecordsByDay.ContainsKey(day))
-                            {
-                                mImageRecordsByDay[day].loadDaySettingsFromBytes(dayCfgBuffer);
-                            }
+                            mImageRecordsByDay[day].loadDaySettingsFromBytes(dayCfgBuffer);
                         }
-                        updateImageRecordStatus(false);
                     }
+                    updateImageRecordStatus(false);
+                    logMessage("Day settings loaded from " + dayCfgSettingFile);
                 }
             }
         }
