@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewMain = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -59,16 +59,14 @@
             this.buttonLoadFilelist = new System.Windows.Forms.Button();
             this.buttonSaveFilelist = new System.Windows.Forms.Button();
             this.groupBoxPicControls = new System.Windows.Forms.GroupBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.buttonSaveIntByDay = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.labelRecordStatus = new System.Windows.Forms.Label();
             this.groupBoxDaySettings = new System.Windows.Forms.GroupBox();
-            this.buttonLoadSettings = new System.Windows.Forms.Button();
             this.buttonSaveSettingsToFile = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxDaySettingFiles = new System.Windows.Forms.ComboBox();
             this.numericDayCfgEndMinute = new System.Windows.Forms.NumericUpDown();
             this.numericDayCfgEndHour = new System.Windows.Forms.NumericUpDown();
             this.numericDayCfgStartMinute = new System.Windows.Forms.NumericUpDown();
@@ -82,7 +80,6 @@
             this.openFileDlgDayCfgSettings = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBoxDaySettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgEndMinute)).BeginInit();
@@ -92,9 +89,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgIntSec)).BeginInit();
             this.SuspendLayout();
             // 
-            // listView1
+            // listViewMain
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listViewMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
@@ -105,15 +102,15 @@
             this.columnHeader9,
             this.columnHeader10,
             this.columnHeader6});
-            this.listView1.FullRowSelect = true;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(280, 25);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(839, 593);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.listViewMain.FullRowSelect = true;
+            this.listViewMain.HideSelection = false;
+            this.listViewMain.Location = new System.Drawing.Point(280, 25);
+            this.listViewMain.Name = "listViewMain";
+            this.listViewMain.Size = new System.Drawing.Size(839, 593);
+            this.listViewMain.TabIndex = 0;
+            this.listViewMain.UseCompatibleStateImageBehavior = false;
+            this.listViewMain.View = System.Windows.Forms.View.Details;
+            this.listViewMain.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -330,7 +327,6 @@
             // 
             // groupBoxPicControls
             // 
-            this.groupBoxPicControls.Controls.Add(this.numericUpDown1);
             this.groupBoxPicControls.Controls.Add(this.buttonSaveIntByDay);
             this.groupBoxPicControls.Controls.Add(this.label4);
             this.groupBoxPicControls.Controls.Add(this.numericSkipNthFile);
@@ -347,28 +343,6 @@
             this.groupBoxPicControls.TabIndex = 19;
             this.groupBoxPicControls.TabStop = false;
             this.groupBoxPicControls.Text = "Picture controls";
-            // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(178, 139);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(73, 20);
-            this.numericUpDown1.TabIndex = 18;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
             // 
             // buttonSaveIntByDay
             // 
@@ -417,9 +391,8 @@
             // 
             // groupBoxDaySettings
             // 
-            this.groupBoxDaySettings.Controls.Add(this.buttonLoadSettings);
             this.groupBoxDaySettings.Controls.Add(this.buttonSaveSettingsToFile);
-            this.groupBoxDaySettings.Controls.Add(this.comboBox1);
+            this.groupBoxDaySettings.Controls.Add(this.comboBoxDaySettingFiles);
             this.groupBoxDaySettings.Controls.Add(this.numericDayCfgEndMinute);
             this.groupBoxDaySettings.Controls.Add(this.numericDayCfgEndHour);
             this.groupBoxDaySettings.Controls.Add(this.numericDayCfgStartMinute);
@@ -429,44 +402,34 @@
             this.groupBoxDaySettings.Enabled = false;
             this.groupBoxDaySettings.Location = new System.Drawing.Point(12, 348);
             this.groupBoxDaySettings.Name = "groupBoxDaySettings";
-            this.groupBoxDaySettings.Size = new System.Drawing.Size(259, 188);
+            this.groupBoxDaySettings.Size = new System.Drawing.Size(259, 148);
             this.groupBoxDaySettings.TabIndex = 22;
             this.groupBoxDaySettings.TabStop = false;
             this.groupBoxDaySettings.Text = "Day Settings";
             // 
-            // buttonLoadSettings
-            // 
-            this.buttonLoadSettings.Location = new System.Drawing.Point(137, 46);
-            this.buttonLoadSettings.Name = "buttonLoadSettings";
-            this.buttonLoadSettings.Size = new System.Drawing.Size(116, 23);
-            this.buttonLoadSettings.TabIndex = 28;
-            this.buttonLoadSettings.Text = "Load Settings File";
-            this.buttonLoadSettings.UseVisualStyleBackColor = true;
-            this.buttonLoadSettings.Click += new System.EventHandler(this.buttonLoadSettings_Click);
-            // 
             // buttonSaveSettingsToFile
             // 
-            this.buttonSaveSettingsToFile.Location = new System.Drawing.Point(6, 46);
+            this.buttonSaveSettingsToFile.Location = new System.Drawing.Point(211, 19);
             this.buttonSaveSettingsToFile.Name = "buttonSaveSettingsToFile";
-            this.buttonSaveSettingsToFile.Size = new System.Drawing.Size(125, 23);
+            this.buttonSaveSettingsToFile.Size = new System.Drawing.Size(42, 23);
             this.buttonSaveSettingsToFile.TabIndex = 27;
-            this.buttonSaveSettingsToFile.Text = "Save Settings To File";
+            this.buttonSaveSettingsToFile.Text = "Save";
             this.buttonSaveSettingsToFile.UseVisualStyleBackColor = true;
             this.buttonSaveSettingsToFile.Click += new System.EventHandler(this.buttonSaveSettingsToFile_Click);
             // 
-            // comboBox1
+            // comboBoxDaySettingFiles
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(6, 19);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(247, 21);
-            this.comboBox1.TabIndex = 27;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBoxDaySettingFiles.FormattingEnabled = true;
+            this.comboBoxDaySettingFiles.Location = new System.Drawing.Point(6, 19);
+            this.comboBoxDaySettingFiles.Name = "comboBoxDaySettingFiles";
+            this.comboBoxDaySettingFiles.Size = new System.Drawing.Size(199, 21);
+            this.comboBoxDaySettingFiles.TabIndex = 27;
+            this.comboBoxDaySettingFiles.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // numericDayCfgEndMinute
             // 
             this.numericDayCfgEndMinute.Enabled = false;
-            this.numericDayCfgEndMinute.Location = new System.Drawing.Point(166, 161);
+            this.numericDayCfgEndMinute.Location = new System.Drawing.Point(166, 120);
             this.numericDayCfgEndMinute.Maximum = new decimal(new int[] {
             59,
             0,
@@ -480,7 +443,7 @@
             // numericDayCfgEndHour
             // 
             this.numericDayCfgEndHour.Enabled = false;
-            this.numericDayCfgEndHour.Location = new System.Drawing.Point(122, 161);
+            this.numericDayCfgEndHour.Location = new System.Drawing.Point(122, 120);
             this.numericDayCfgEndHour.Maximum = new decimal(new int[] {
             24,
             0,
@@ -499,7 +462,7 @@
             // numericDayCfgStartMinute
             // 
             this.numericDayCfgStartMinute.Enabled = false;
-            this.numericDayCfgStartMinute.Location = new System.Drawing.Point(50, 161);
+            this.numericDayCfgStartMinute.Location = new System.Drawing.Point(50, 120);
             this.numericDayCfgStartMinute.Maximum = new decimal(new int[] {
             59,
             0,
@@ -513,7 +476,7 @@
             // numericDayCfgStartHour
             // 
             this.numericDayCfgStartHour.Enabled = false;
-            this.numericDayCfgStartHour.Location = new System.Drawing.Point(6, 161);
+            this.numericDayCfgStartHour.Location = new System.Drawing.Point(6, 120);
             this.numericDayCfgStartHour.Maximum = new decimal(new int[] {
             23,
             0,
@@ -532,7 +495,7 @@
             // numericDayCfgIntSec
             // 
             this.numericDayCfgIntSec.Enabled = false;
-            this.numericDayCfgIntSec.Location = new System.Drawing.Point(6, 135);
+            this.numericDayCfgIntSec.Location = new System.Drawing.Point(6, 94);
             this.numericDayCfgIntSec.Maximum = new decimal(new int[] {
             86400,
             0,
@@ -557,7 +520,7 @@
             // 
             this.checkBoxDayCfgActive.AutoSize = true;
             this.checkBoxDayCfgActive.Enabled = false;
-            this.checkBoxDayCfgActive.Location = new System.Drawing.Point(6, 112);
+            this.checkBoxDayCfgActive.Location = new System.Drawing.Point(6, 71);
             this.checkBoxDayCfgActive.Name = "checkBoxDayCfgActive";
             this.checkBoxDayCfgActive.Size = new System.Drawing.Size(56, 17);
             this.checkBoxDayCfgActive.TabIndex = 0;
@@ -627,13 +590,14 @@
             this.Controls.Add(this.groupBoxPicControls);
             this.Controls.Add(this.richTextBoxLog);
             this.Controls.Add(this.listView2);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.listViewMain);
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "LongLapse Organizer";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).EndInit();
             this.groupBoxPicControls.ResumeLayout(false);
             this.groupBoxPicControls.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBoxDaySettings.ResumeLayout(false);
@@ -650,7 +614,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewMain;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListView listView2;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
@@ -677,7 +641,6 @@
         private System.Windows.Forms.Label labelRecordStatus;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button buttonSaveIntByDay;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
@@ -698,9 +661,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader10;
         private System.Windows.Forms.CheckBox checkBoxShowInactive;
         private System.Windows.Forms.Label labelTotalSelectedFiles;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxDaySettingFiles;
         private System.Windows.Forms.Button buttonSaveSettingsToFile;
-        private System.Windows.Forms.Button buttonLoadSettings;
         private System.Windows.Forms.OpenFileDialog openFileDlgDayCfgSettings;
     }
 }
