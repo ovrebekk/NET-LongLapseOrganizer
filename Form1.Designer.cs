@@ -84,6 +84,8 @@
             this.colHdrInterval = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colHdrFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonLoadImages = new System.Windows.Forms.Button();
+            this.buttonDisplayImage = new System.Windows.Forms.Button();
+            this.pictureBoxPreview = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -93,6 +95,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartMinute)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartHour)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgIntSec)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreview)).BeginInit();
             this.SuspendLayout();
             // 
             // listViewMain
@@ -604,10 +607,11 @@
             this.listViewImages.HideSelection = false;
             this.listViewImages.Location = new System.Drawing.Point(769, 25);
             this.listViewImages.Name = "listViewImages";
-            this.listViewImages.Size = new System.Drawing.Size(531, 564);
+            this.listViewImages.Size = new System.Drawing.Size(531, 391);
             this.listViewImages.TabIndex = 27;
             this.listViewImages.UseCompatibleStateImageBehavior = false;
             this.listViewImages.View = System.Windows.Forms.View.Details;
+            this.listViewImages.SelectedIndexChanged += new System.EventHandler(this.listViewImages_SelectedIndexChanged);
             // 
             // colHdrTime
             // 
@@ -624,7 +628,8 @@
             // 
             // buttonLoadImages
             // 
-            this.buttonLoadImages.Location = new System.Drawing.Point(769, 595);
+            this.buttonLoadImages.Enabled = false;
+            this.buttonLoadImages.Location = new System.Drawing.Point(769, 422);
             this.buttonLoadImages.Name = "buttonLoadImages";
             this.buttonLoadImages.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadImages.TabIndex = 18;
@@ -632,11 +637,33 @@
             this.buttonLoadImages.UseVisualStyleBackColor = true;
             this.buttonLoadImages.Click += new System.EventHandler(this.buttonLoadImages_Click);
             // 
+            // buttonDisplayImage
+            // 
+            this.buttonDisplayImage.Enabled = false;
+            this.buttonDisplayImage.Location = new System.Drawing.Point(850, 422);
+            this.buttonDisplayImage.Name = "buttonDisplayImage";
+            this.buttonDisplayImage.Size = new System.Drawing.Size(75, 23);
+            this.buttonDisplayImage.TabIndex = 28;
+            this.buttonDisplayImage.Text = "Display";
+            this.buttonDisplayImage.UseVisualStyleBackColor = true;
+            this.buttonDisplayImage.Click += new System.EventHandler(this.buttonDisplayImage_Click);
+            // 
+            // pictureBoxPreview
+            // 
+            this.pictureBoxPreview.Location = new System.Drawing.Point(931, 419);
+            this.pictureBoxPreview.Name = "pictureBoxPreview";
+            this.pictureBoxPreview.Size = new System.Drawing.Size(369, 226);
+            this.pictureBoxPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxPreview.TabIndex = 29;
+            this.pictureBoxPreview.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1311, 765);
+            this.Controls.Add(this.pictureBoxPreview);
+            this.Controls.Add(this.buttonDisplayImage);
             this.Controls.Add(this.buttonLoadImages);
             this.Controls.Add(this.listViewImages);
             this.Controls.Add(this.labelTotalSelectedFiles);
@@ -666,6 +693,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartMinute)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgStartHour)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericDayCfgIntSec)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -729,6 +757,8 @@
         private System.Windows.Forms.ColumnHeader colHdrInterval;
         private System.Windows.Forms.ColumnHeader colHdrFilename;
         private System.Windows.Forms.Button buttonLoadImages;
+        private System.Windows.Forms.Button buttonDisplayImage;
+        private System.Windows.Forms.PictureBox pictureBoxPreview;
     }
 }
 
