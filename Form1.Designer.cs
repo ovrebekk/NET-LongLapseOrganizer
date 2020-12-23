@@ -607,7 +607,7 @@
             this.listViewImages.HideSelection = false;
             this.listViewImages.Location = new System.Drawing.Point(769, 25);
             this.listViewImages.Name = "listViewImages";
-            this.listViewImages.Size = new System.Drawing.Size(531, 391);
+            this.listViewImages.Size = new System.Drawing.Size(531, 317);
             this.listViewImages.TabIndex = 27;
             this.listViewImages.UseCompatibleStateImageBehavior = false;
             this.listViewImages.View = System.Windows.Forms.View.Details;
@@ -650,9 +650,9 @@
             // 
             // pictureBoxPreview
             // 
-            this.pictureBoxPreview.Location = new System.Drawing.Point(931, 419);
+            this.pictureBoxPreview.Location = new System.Drawing.Point(931, 348);
             this.pictureBoxPreview.Name = "pictureBoxPreview";
-            this.pictureBoxPreview.Size = new System.Drawing.Size(369, 226);
+            this.pictureBoxPreview.Size = new System.Drawing.Size(481, 297);
             this.pictureBoxPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxPreview.TabIndex = 29;
             this.pictureBoxPreview.TabStop = false;
@@ -661,7 +661,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1311, 765);
+            this.ClientSize = new System.Drawing.Size(1441, 765);
             this.Controls.Add(this.pictureBoxPreview);
             this.Controls.Add(this.buttonDisplayImage);
             this.Controls.Add(this.buttonLoadImages);

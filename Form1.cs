@@ -13,6 +13,8 @@ using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.Iptc;
 using MetadataExtractor.Formats.Jpeg;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace LongLapseOrganizer
 {
@@ -523,39 +525,18 @@ namespace LongLapseOrganizer
             if (listViewImages.SelectedItems.Count == 1)
             {
                 ImageRecord imageRecord = (ImageRecord)listViewImages.SelectedItems[0].Tag;
-                byte [] imgData = extractJpegFromRaw(imageRecord.FileName);
-                if(imgData != null)
+                Image thumbImage;
+                if ((thumbImage = ImageProcessing.getJpgThumbnailFromFile(imageRecord.FileName)) != null)
                 {
-                    MemoryStream stream = new MemoryStream();
-                    stream.Write(imgData, 0, imgData.Length);
-                    Image myImage = Image.FromStream(stream);
-                    pictureBoxPreview.Image = myImage;
+                    pictureBoxPreview.Image = thumbImage;
                 }
+                else if ((thumbImage = ImageProcessing.getJpgThumbnailFromNEF(imageRecord.FileName)) != null)
+                {
+                    pictureBoxPreview.Image = thumbImage;
+                    ImageProcessing.saveJpgThumbnailToFile(thumbImage, imageRecord.FileName);
+                }
+                else logMessage("Error: Can't generate JPG thumbnail from NEF");
             }
-        }
-
-        public byte[] extractJpegFromRaw(string fileName)
-        {
-            byte[] retVal = null;
-            int offset, length;
-            try
-            {
-                var directories = ImageMetadataReader.ReadMetadata(fileName);
-                var subIfdDirectory = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-                offset = subIfdDirectory.GetInt32(0x0201);
-                length = subIfdDirectory.GetInt32(0x0202);
-            }
-            catch (IOException e)
-            {
-                return null;
-            }
-            using (FileStream fs = File.OpenRead(fileName))
-            {
-                retVal = new byte[length];
-                fs.Position = offset;
-                fs.Read(retVal, 0, length);
-            }
-            return retVal;
         }
     }
 
