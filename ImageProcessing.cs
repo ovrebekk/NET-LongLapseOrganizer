@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -17,13 +18,32 @@ namespace LongLapseOrganizer
     {
         private static int THUMB_WIDTH = 600;
         private static int THUMB_HEIGHT = 400;
-        /// <summary>
-        /// Resize the image to the specified width and height.
-        /// </summary>
-        /// <param name="image">The image to resize.</param>
-        /// <param name="width">The width to resize to.</param>
-        /// <param name="height">The height to resize to.</param>
-        /// <returns>The resized image.</returns>
+
+        public static void startProcessingThread(string [] imagesToLoad)
+        {
+            Thread processingThread = new Thread(ShowThreadInformation);
+            processingThread.Start(imagesToLoad);
+        }
+
+        private static void ShowThreadInformation(Object state)
+        {
+            string[] imageList = (string[])state;
+            Image thumbImage;
+            string jpgFileName;
+            foreach (string imgFileName in imageList)
+            {
+                jpgFileName = thumbFilenameFromNef(imgFileName);
+                if (!File.Exists(jpgFileName))
+                {
+                    if ((thumbImage = ImageProcessing.getJpgThumbnailFromNEF(imgFileName)) != null)
+                    {
+                        ImageProcessing.saveJpgThumbnailToFile(thumbImage, imgFileName);
+                        Console.WriteLine(jpgFileName + " stored to file");
+                    }
+                }
+            }
+        }
+
         private static Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -73,22 +93,6 @@ namespace LongLapseOrganizer
             return retVal;
         }
 
-
-        /*! \brief Convert RGB to HSV color space
-  
-          Converts a given set of RGB values `r', `g', `b' into HSV
-          coordinates. The input RGB values are in the range [0, 1], and the
-          output HSV values are in the ranges h = [0, 360], and s, v = [0,
-          1], respectively.
-  
-          \param fR Red component, used as input, range: [0, 1]
-          \param fG Green component, used as input, range: [0, 1]
-          \param fB Blue component, used as input, range: [0, 1]
-          \param fH Hue component, used as output, range: [0, 360]
-          \param fS Hue component, used as output, range: [0, 1]
-          \param fV Hue component, used as output, range: [0, 1]
-  
-        */
         public static void RGBtoHSV(float fR, float fG, float fB, out float fH, out float fS, out float fV)
         {
             float fCMax = (fR > fG) ? (fR > fB ? fR : fB) : (fB > fG ? fB : fG);
@@ -134,22 +138,6 @@ namespace LongLapseOrganizer
             }
         }
 
-
-        /*! \brief Convert HSV to RGB color space
-
-          Converts a given set of HSV values `h', `s', `v' into RGB
-          coordinates. The output RGB values are in the range [0, 1], and
-          the input HSV values are in the ranges h = [0, 360], and s, v =
-          [0, 1], respectively.
-
-          \param fR Red component, used as output, range: [0, 1]
-          \param fG Green component, used as output, range: [0, 1]
-          \param fB Blue component, used as output, range: [0, 1]
-          \param fH Hue component, used as input, range: [0, 360]
-          \param fS Hue component, used as input, range: [0, 1]
-          \param fV Hue component, used as input, range: [0, 1]
-
-        */
         private static float fabs(float value)
         {
             return (value > 0.0f ? value : -value);

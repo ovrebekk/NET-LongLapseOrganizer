@@ -276,6 +276,8 @@ namespace LongLapseOrganizer
 
                     updateImageRecordStatus(true);
 
+                    buttonSaveFilelist.Enabled = true;
+
                     // Populate combobox of day setting files based on files in the same directory
                     comboBoxDaySettingFiles.Items.Clear();
                     string[] daySettingFiles = System.IO.Directory.GetFiles(Path.GetDirectoryName(openFileDialog1.FileName),
@@ -336,6 +338,18 @@ namespace LongLapseOrganizer
                 checkBoxDayCfgActive.Enabled = numericDayCfgIntSec.Enabled = numericDayCfgStartHour.Enabled =
                     numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = true;
                 labelDaySelected.Text = daySummary.FirstTime.ToShortDateString();
+
+                // Load list of all images for this day
+                listViewImages.Items.Clear();
+                ImagesByDaySummary summary = (ImagesByDaySummary)listViewMain.SelectedItems[0].Tag;
+                DateTime prevImageDateTime = DateTime.MinValue;
+                foreach (ImageRecord ir in summary.AllImages)
+                {
+                    ListViewItem newItem = new ListViewItem(ir.getListStrings(prevImageDateTime));
+                    newItem.Tag = ir;
+                    listViewImages.Items.Add(newItem);
+                    prevImageDateTime = ir.CaptureTime;
+                }
             }
             else if (listViewMain.SelectedItems.Count > 1)
             {
@@ -350,7 +364,6 @@ namespace LongLapseOrganizer
                     numericDayCfgStartMinute.Enabled = numericDayCfgEndHour.Enabled = numericDayCfgEndMinute.Enabled = false;
                 labelDaySelected.Text = "-";
             }
-            buttonLoadImages.Enabled = (listViewMain.SelectedItems.Count == 1);
         }
 
         private void checkBoxDayCfgActive_CheckedChanged(object sender, EventArgs e)
@@ -500,27 +513,10 @@ namespace LongLapseOrganizer
 
         private void buttonLoadImages_Click(object sender, EventArgs e)
         {
-            if (listViewMain.SelectedItems.Count == 1)
-            {
-                listViewImages.Items.Clear();
-                ImagesByDaySummary summary = (ImagesByDaySummary)listViewMain.SelectedItems[0].Tag;
-                DateTime prevImageDateTime = DateTime.MinValue;
-                foreach (ImageRecord ir in summary.AllImages)
-                {
-                    ListViewItem newItem = new ListViewItem(ir.getListStrings(prevImageDateTime));
-                    newItem.Tag = ir;
-                    listViewImages.Items.Add(newItem);
-                    prevImageDateTime = ir.CaptureTime;
-                }
-            }
+
         }
 
         private void listViewImages_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            buttonDisplayImage.Enabled = (listViewImages.SelectedItems.Count == 1);
-        }
-
-        private void buttonDisplayImage_Click(object sender, EventArgs e)
         {
             if (listViewImages.SelectedItems.Count == 1)
             {
@@ -529,13 +525,50 @@ namespace LongLapseOrganizer
                 if ((thumbImage = ImageProcessing.getJpgThumbnailFromFile(imageRecord.FileName)) != null)
                 {
                     pictureBoxPreview.Image = thumbImage;
+                    imageRecord.ThumbnailStored = true;
                 }
                 else if ((thumbImage = ImageProcessing.getJpgThumbnailFromNEF(imageRecord.FileName)) != null)
                 {
+                    Console.WriteLine("Thumb not found, generated: " + imageRecord.FileName);
                     pictureBoxPreview.Image = thumbImage;
                     ImageProcessing.saveJpgThumbnailToFile(thumbImage, imageRecord.FileName);
+                    imageRecord.ThumbnailStored = true;
                 }
                 else logMessage("Error: Can't generate JPG thumbnail from NEF");
+            }
+        }
+
+        private void buttonDisplayImage_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonLoadAllThumbs_Click(object sender, EventArgs e)
+        {
+            if(listViewMain.SelectedItems.Count == 1)
+            {
+                ImagesByDaySummary summary = (ImagesByDaySummary)listViewMain.SelectedItems[0].Tag;
+                List<string> filenameList = new List<string>();
+                List<string> filenameList2 = new List<string>();
+                List<string> filenameList3 = new List<string>();
+                List<string> filenameList4 = new List<string>();
+                int i = 0;
+                foreach (ImageRecord ir in summary.AllImages)
+                {
+                    switch(i%4)
+                    {
+                        case 0: filenameList.Add(ir.FileName); break;
+                        case 1: filenameList2.Add(ir.FileName); break;
+                        case 2: filenameList3.Add(ir.FileName); break;
+                        case 3: filenameList4.Add(ir.FileName); break;
+                        default:break;
+                    }
+                    i++;
+                }
+                ImageProcessing.startProcessingThread(filenameList.ToArray());
+                ImageProcessing.startProcessingThread(filenameList2.ToArray());
+                ImageProcessing.startProcessingThread(filenameList3.ToArray());
+                ImageProcessing.startProcessingThread(filenameList4.ToArray());
             }
         }
     }
@@ -668,10 +701,12 @@ namespace LongLapseOrganizer
         private String mFileName;
         private DateTime mDateTime;
         private bool mActive;
+        private bool mThumbnailStored;
 
         public ImageRecord()
         {
             mActive = true;
+            mThumbnailStored = false;
         }
 
         public DateTime CaptureTime
@@ -692,12 +727,19 @@ namespace LongLapseOrganizer
             set { mActive = value; }
         }
 
+        public bool ThumbnailStored
+        {
+            get { return mThumbnailStored; }
+            set { mThumbnailStored = value; }
+        }
+
         // File related
         public int getByteLength()
         {
             return Encoding.ASCII.GetBytes(mFileName).Length + 2 // FileName
                    + 8                  // DateTime
-                   + 1;                 // bool Active
+                   + 1                  // bool Active
+                   + 1;                 // bool ThumbnailStored
         }
 
         public byte [] getBytes()
@@ -705,9 +747,10 @@ namespace LongLapseOrganizer
             int arrayLength = getByteLength();
             byte[] returnArray = new byte[arrayLength];
             returnArray[0] = mActive ? (byte)1 : (byte)0;
-            BitConverter.GetBytes(mDateTime.Ticks).CopyTo(returnArray, 1);
-            BitConverter.GetBytes((UInt16)(mFileName.Length)).CopyTo(returnArray, 9);
-            Encoding.ASCII.GetBytes(mFileName).CopyTo(returnArray, 11);
+            returnArray[1] = mThumbnailStored ? (byte)1 : (byte)0;
+            BitConverter.GetBytes(mDateTime.Ticks).CopyTo(returnArray, 2);
+            BitConverter.GetBytes((UInt16)(mFileName.Length)).CopyTo(returnArray, 10);
+            Encoding.ASCII.GetBytes(mFileName).CopyTo(returnArray, 12);
             return returnArray;
         }
 
@@ -731,14 +774,17 @@ namespace LongLapseOrganizer
         {
             ImageRecord newImageRecord = new ImageRecord();
             byte[] active = new byte[1];
+            byte[] thumbnailSaved = new byte[1];
             byte[] dateTime = new byte[8];
             byte[] nameLength = new byte[2];
             if(inputStream.Read(active, 0, 1) == 0) return null;
+            if(inputStream.Read(thumbnailSaved, 0, 1) == 0) return null;
             if(inputStream.Read(dateTime, 0, 8) == 0) return null;
             if(inputStream.Read(nameLength, 0, 2) == 0) return null;
             byte[] name = new byte[BitConverter.ToUInt16(nameLength, 0)];
             if(inputStream.Read(name, 0, BitConverter.ToUInt16(nameLength, 0)) == 0) return null;
             newImageRecord.Active = (active[0] != 0);
+            newImageRecord.ThumbnailStored = (thumbnailSaved[0] != 0);
             newImageRecord.CaptureTime = DateTime.FromBinary(BitConverter.ToInt64(dateTime, 0));
             newImageRecord.CaptureTime = newImageRecord.CaptureTime.AddHours(11);
             newImageRecord.FileName = System.Text.Encoding.Default.GetString(name);

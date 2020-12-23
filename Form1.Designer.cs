@@ -83,9 +83,8 @@
             this.colHdrTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colHdrInterval = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colHdrFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonLoadImages = new System.Windows.Forms.Button();
-            this.buttonDisplayImage = new System.Windows.Forms.Button();
             this.pictureBoxPreview = new System.Windows.Forms.PictureBox();
+            this.buttonLoadAllThumbs = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -626,28 +625,6 @@
             this.colHdrFilename.Text = "Filename";
             this.colHdrFilename.Width = 360;
             // 
-            // buttonLoadImages
-            // 
-            this.buttonLoadImages.Enabled = false;
-            this.buttonLoadImages.Location = new System.Drawing.Point(769, 422);
-            this.buttonLoadImages.Name = "buttonLoadImages";
-            this.buttonLoadImages.Size = new System.Drawing.Size(75, 23);
-            this.buttonLoadImages.TabIndex = 18;
-            this.buttonLoadImages.Text = "Load Images";
-            this.buttonLoadImages.UseVisualStyleBackColor = true;
-            this.buttonLoadImages.Click += new System.EventHandler(this.buttonLoadImages_Click);
-            // 
-            // buttonDisplayImage
-            // 
-            this.buttonDisplayImage.Enabled = false;
-            this.buttonDisplayImage.Location = new System.Drawing.Point(850, 422);
-            this.buttonDisplayImage.Name = "buttonDisplayImage";
-            this.buttonDisplayImage.Size = new System.Drawing.Size(75, 23);
-            this.buttonDisplayImage.TabIndex = 28;
-            this.buttonDisplayImage.Text = "Display";
-            this.buttonDisplayImage.UseVisualStyleBackColor = true;
-            this.buttonDisplayImage.Click += new System.EventHandler(this.buttonDisplayImage_Click);
-            // 
             // pictureBoxPreview
             // 
             this.pictureBoxPreview.Location = new System.Drawing.Point(931, 348);
@@ -657,14 +634,23 @@
             this.pictureBoxPreview.TabIndex = 29;
             this.pictureBoxPreview.TabStop = false;
             // 
+            // buttonLoadAllThumbs
+            // 
+            this.buttonLoadAllThumbs.Location = new System.Drawing.Point(769, 393);
+            this.buttonLoadAllThumbs.Name = "buttonLoadAllThumbs";
+            this.buttonLoadAllThumbs.Size = new System.Drawing.Size(113, 23);
+            this.buttonLoadAllThumbs.TabIndex = 30;
+            this.buttonLoadAllThumbs.Text = "Load All Thumbnails";
+            this.buttonLoadAllThumbs.UseVisualStyleBackColor = true;
+            this.buttonLoadAllThumbs.Click += new System.EventHandler(this.buttonLoadAllThumbs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1441, 765);
+            this.Controls.Add(this.buttonLoadAllThumbs);
             this.Controls.Add(this.pictureBoxPreview);
-            this.Controls.Add(this.buttonDisplayImage);
-            this.Controls.Add(this.buttonLoadImages);
             this.Controls.Add(this.listViewImages);
             this.Controls.Add(this.labelTotalSelectedFiles);
             this.Controls.Add(this.checkBoxShowInactive);
@@ -756,9 +742,8 @@
         private System.Windows.Forms.ColumnHeader colHdrTime;
         private System.Windows.Forms.ColumnHeader colHdrInterval;
         private System.Windows.Forms.ColumnHeader colHdrFilename;
-        private System.Windows.Forms.Button buttonLoadImages;
-        private System.Windows.Forms.Button buttonDisplayImage;
         private System.Windows.Forms.PictureBox pictureBoxPreview;
+        private System.Windows.Forms.Button buttonLoadAllThumbs;
     }
 }
 
