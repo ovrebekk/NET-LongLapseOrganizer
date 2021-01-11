@@ -350,6 +350,9 @@ namespace LongLapseOrganizer
                     listViewImages.Items.Add(newItem);
                     prevImageDateTime = ir.CaptureTimeAdjusted;
                 }
+
+                // Simulate button click to update picture summary form, if it is enabled
+                button2_Click_1(null, null);
             }
             else if (listViewMain.SelectedItems.Count > 1)
             {
@@ -521,20 +524,29 @@ namespace LongLapseOrganizer
             if (listViewImages.SelectedItems.Count == 1)
             {
                 ImageRecord imageRecord = (ImageRecord)listViewImages.SelectedItems[0].Tag;
-                Image thumbImage;
-                if ((thumbImage = ImageProcessing.getJpgThumbnailFromFile(imageRecord.FileName)) != null)
-                {
-                    pictureBoxPreview.Image = thumbImage;
-                    imageRecord.ThumbnailStored = true;
-                }
-                else if ((thumbImage = ImageProcessing.getJpgThumbnailFromNEF(imageRecord.FileName)) != null)
-                {
-                    Console.WriteLine("Thumb not found, generated: " + imageRecord.FileName);
-                    pictureBoxPreview.Image = thumbImage;
-                    ImageProcessing.saveJpgThumbnailToFile(thumbImage, imageRecord.FileName);
-                    imageRecord.ThumbnailStored = true;
-                }
-                else logMessage("Error: Can't generate JPG thumbnail from NEF");
+                pictureBoxPreview.Image = getThumbnailFromImageRecord(imageRecord);
+            }
+        }
+
+        private Image getThumbnailFromImageRecord(ImageRecord ir)
+        {
+            Image returnImage;
+            if ((returnImage = ImageProcessing.getJpgThumbnailFromFile(ir.FileName)) != null)
+            {
+                ir.ThumbnailStored = true;
+                return returnImage;
+            }
+            else if ((returnImage = ImageProcessing.getJpgThumbnailFromNEF(ir.FileName)) != null)
+            {
+                Console.WriteLine("Thumb not found, generated: " + ir.FileName);
+                ImageProcessing.saveJpgThumbnailToFile(returnImage, ir.FileName);
+                ir.ThumbnailStored = true;
+                return returnImage;
+            }
+            else
+            {
+                logMessage("Error: Can't generate JPG thumbnail from NEF");
+                return null;
             }
         }
 
@@ -589,6 +601,38 @@ namespace LongLapseOrganizer
                 ImageRecord ir = (ImageRecord)listViewImages.SelectedItems[0].Tag;
                 numericDayCfgEndHour.Value = ir.CaptureTimeAdjusted.Hour;
                 numericDayCfgEndMinute.Value = ir.CaptureTimeAdjusted.Minute;
+            }
+        }
+
+        DayBoundaryView dayBoundaryView = null;
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            if(sender != null && dayBoundaryView == null)
+            {
+                dayBoundaryView = new DayBoundaryView();
+                dayBoundaryView.Show();
+            }
+            if (dayBoundaryView != null && listViewMain.SelectedItems.Count == 1)
+            {
+                Image[] listImages = new Image[6];
+                ImagesByDaySummary daySummary;
+                if (listViewMain.SelectedIndices[0] > 0)
+                {
+                    daySummary = (ImagesByDaySummary)listViewMain.Items[listViewMain.SelectedIndices[0] - 1].Tag;
+                    listImages[0] = getThumbnailFromImageRecord(daySummary.AllImages.First());
+                    listImages[1] = getThumbnailFromImageRecord(daySummary.AllImages.Last());
+                }
+                daySummary = (ImagesByDaySummary)listViewMain.Items[listViewMain.SelectedIndices[0]].Tag;
+                listImages[2] = getThumbnailFromImageRecord(daySummary.AllImages.First());
+                listImages[3] = getThumbnailFromImageRecord(daySummary.AllImages.Last());
+                if (listViewMain.SelectedIndices[0] < (listViewMain.Items.Count - 1))
+                {
+                    daySummary = (ImagesByDaySummary)listViewMain.Items[listViewMain.SelectedIndices[0] + 1].Tag;
+                    listImages[4] = getThumbnailFromImageRecord(daySummary.AllImages.First());
+                    listImages[5] = getThumbnailFromImageRecord(daySummary.AllImages.Last());
+                }
+                dayBoundaryView.setImages(listImages);
             }
         }
     }
