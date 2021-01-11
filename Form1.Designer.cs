@@ -85,6 +85,7 @@
             this.colHdrFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBoxPreview = new System.Windows.Forms.PictureBox();
             this.buttonLoadAllThumbs = new System.Windows.Forms.Button();
+            this.colHdrAdjustMinutes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -601,6 +602,7 @@
             this.listViewImages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colHdrTime,
             this.colHdrInterval,
+            this.colHdrAdjustMinutes,
             this.colHdrFilename});
             this.listViewImages.FullRowSelect = true;
             this.listViewImages.HideSelection = false;
@@ -643,6 +645,11 @@
             this.buttonLoadAllThumbs.Text = "Load All Thumbnails";
             this.buttonLoadAllThumbs.UseVisualStyleBackColor = true;
             this.buttonLoadAllThumbs.Click += new System.EventHandler(this.buttonLoadAllThumbs_Click);
+            // 
+            // colHdrAdjustMinutes
+            // 
+            this.colHdrAdjustMinutes.Text = "Min. Offset";
+            this.colHdrAdjustMinutes.Width = 65;
             // 
             // Form1
             // 
@@ -744,6 +751,7 @@
         private System.Windows.Forms.ColumnHeader colHdrFilename;
         private System.Windows.Forms.PictureBox pictureBoxPreview;
         private System.Windows.Forms.Button buttonLoadAllThumbs;
+        private System.Windows.Forms.ColumnHeader colHdrAdjustMinutes;
     }
 }
 

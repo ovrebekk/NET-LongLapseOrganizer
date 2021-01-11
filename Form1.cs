@@ -67,18 +67,18 @@ namespace LongLapseOrganizer
                     mImageRecordsByDay.Clear();
                     foreach (ImageRecord ir in mImageRecordList)
                     {
-                        if (mImageRecordsByDay.ContainsKey(ir.CaptureTime.Date))
+                        if (mImageRecordsByDay.ContainsKey(ir.CaptureTimeAdjusted.Date))
                         {
-                            mImageRecordsByDay[ir.CaptureTime.Date].NumberOfPictures++;
-                            mImageRecordsByDay[ir.CaptureTime.Date].registerDateTime(ir.CaptureTime);
-                            mImageRecordsByDay[ir.CaptureTime.Date].addImage(ir);
+                            mImageRecordsByDay[ir.CaptureTimeAdjusted.Date].NumberOfPictures++;
+                            mImageRecordsByDay[ir.CaptureTimeAdjusted.Date].registerDateTime(ir.CaptureTimeAdjusted);
+                            mImageRecordsByDay[ir.CaptureTimeAdjusted.Date].addImage(ir);
                         }
                         else
                         {
-                            ImagesByDaySummary summary = new ImagesByDaySummary(ir.CaptureTime);
+                            ImagesByDaySummary summary = new ImagesByDaySummary(ir.CaptureTimeAdjusted);
                             summary.addImage(ir);
-                            summary.Day = ir.CaptureTime.Date;
-                            mImageRecordsByDay.Add(ir.CaptureTime.Date, summary);
+                            summary.Day = ir.CaptureTimeAdjusted.Date;
+                            mImageRecordsByDay.Add(ir.CaptureTimeAdjusted.Date, summary);
                         }
                     }
 
@@ -93,7 +93,7 @@ namespace LongLapseOrganizer
                     }
                     foreach (ImageRecord ir in mImageRecordList)
                     {
-                        mImageRecordsByDay[ir.CaptureTime.Date].addImage(ir);
+                        mImageRecordsByDay[ir.CaptureTimeAdjusted.Date].addImage(ir);
                     }
                 }
                 int selectedIndex = -1;
@@ -313,7 +313,7 @@ namespace LongLapseOrganizer
                         foreach (ImageRecord selectedImage in dayEntry.Value.SelectedImages)
                         {
                             createSymLink(selectedImage.FileName,
-                                          dayDirectory + "\\" + standardFileName + selectedImage.CaptureTime.ToString("yy_MM_dd_") +
+                                          dayDirectory + "\\" + standardFileName + selectedImage.CaptureTimeAdjusted.ToString("yy_MM_dd_") +
                                             imageIndex.ToString("0000") + ".NEF");
                             imageIndex++;
                         }
@@ -348,7 +348,7 @@ namespace LongLapseOrganizer
                     ListViewItem newItem = new ListViewItem(ir.getListStrings(prevImageDateTime));
                     newItem.Tag = ir;
                     listViewImages.Items.Add(newItem);
-                    prevImageDateTime = ir.CaptureTime;
+                    prevImageDateTime = ir.CaptureTimeAdjusted;
                 }
             }
             else if (listViewMain.SelectedItems.Count > 1)
@@ -622,12 +622,12 @@ namespace LongLapseOrganizer
 
         public void addImage(ImageRecord ir)
         {
-            int captureTimeStamp = ir.CaptureTime.Hour * 100 + ir.CaptureTime.Minute;
+            int captureTimeStamp = ir.CaptureTimeAdjusted.Hour * 100 + ir.CaptureTimeAdjusted.Minute;
             if(captureTimeStamp >= CfgStartTime && captureTimeStamp <= CfgEndTime)
             {
                 if (SelectedPreviousImageRecord != null)
                 {
-                    if (Math.Abs((SelectedPreviousImageRecord.CaptureTime - ir.CaptureTime).TotalSeconds) > (double)CfgIntervalSec)
+                    if (Math.Abs((SelectedPreviousImageRecord.CaptureTimeAdjusted - ir.CaptureTimeAdjusted).TotalSeconds) > (double)CfgIntervalSec)
                     {
                         SelectedImages.Add(ir);
                         SelectedPreviousImageRecord = ir;
@@ -700,6 +700,7 @@ namespace LongLapseOrganizer
     {
         private String mFileName;
         private DateTime mDateTime;
+        private Int16 mDateTimeAdjustMinutes;
         private bool mActive;
         private bool mThumbnailStored;
 
@@ -707,12 +708,23 @@ namespace LongLapseOrganizer
         {
             mActive = true;
             mThumbnailStored = false;
+            mDateTimeAdjustMinutes = 0;
         }
 
         public DateTime CaptureTime
         {
-            get { return mDateTime; }
+            //get { return mDateTime; }
             set { mDateTime = value; }
+        }
+
+        public DateTime CaptureTimeAdjusted
+        {
+            get { return mDateTime.AddMinutes(mDateTimeAdjustMinutes); }
+        }
+
+        public Int16 DateTimeAdjustMinutes
+        {
+            set { mDateTimeAdjustMinutes = value; }
         }
 
         public String FileName
@@ -738,6 +750,7 @@ namespace LongLapseOrganizer
         {
             return Encoding.ASCII.GetBytes(mFileName).Length + 2 // FileName
                    + 8                  // DateTime
+                   + 2                  // DateTimeAdjustMinutes
                    + 1                  // bool Active
                    + 1;                 // bool ThumbnailStored
         }
@@ -749,25 +762,27 @@ namespace LongLapseOrganizer
             returnArray[0] = mActive ? (byte)1 : (byte)0;
             returnArray[1] = mThumbnailStored ? (byte)1 : (byte)0;
             BitConverter.GetBytes(mDateTime.Ticks).CopyTo(returnArray, 2);
-            BitConverter.GetBytes((UInt16)(mFileName.Length)).CopyTo(returnArray, 10);
-            Encoding.ASCII.GetBytes(mFileName).CopyTo(returnArray, 12);
+            BitConverter.GetBytes(mDateTimeAdjustMinutes).CopyTo(returnArray, 10);
+            BitConverter.GetBytes((UInt16)(mFileName.Length)).CopyTo(returnArray, 12);
+            Encoding.ASCII.GetBytes(mFileName).CopyTo(returnArray, 14);
             return returnArray;
         }
 
         public string [] getListStrings(DateTime lastPicTimestamp)
         {
-            string[] retStrings = new string[3];
-            retStrings[0] = mDateTime.ToString("HH:mm:ss");
+            string[] retStrings = new string[4];
+            retStrings[0] = CaptureTimeAdjusted.ToString("HH:mm:ss");
             if (lastPicTimestamp != DateTime.MinValue) retStrings[1] = ((int)((mDateTime.Ticks - lastPicTimestamp.Ticks) / 10000000)).ToString();
             else retStrings[1] = "-";
-            retStrings[2] = mFileName;
+            retStrings[2] = mDateTimeAdjustMinutes.ToString();
+            retStrings[3] = mFileName;
             return retStrings;
         }
 
         // Sorting
         public int CompareTo(ImageRecord other)
         {
-            return mDateTime.CompareTo(other.CaptureTime);
+            return CaptureTimeAdjusted.CompareTo(other.CaptureTimeAdjusted);
         }
 
         static public ImageRecord ImageRecordFromStream(Stream inputStream)
@@ -776,17 +791,20 @@ namespace LongLapseOrganizer
             byte[] active = new byte[1];
             byte[] thumbnailSaved = new byte[1];
             byte[] dateTime = new byte[8];
+            byte[] dateTimeAdjustMinutes = new byte[2];
             byte[] nameLength = new byte[2];
             if(inputStream.Read(active, 0, 1) == 0) return null;
             if(inputStream.Read(thumbnailSaved, 0, 1) == 0) return null;
             if(inputStream.Read(dateTime, 0, 8) == 0) return null;
+            if(inputStream.Read(dateTimeAdjustMinutes, 0, 2) == 0) return null;
             if(inputStream.Read(nameLength, 0, 2) == 0) return null;
             byte[] name = new byte[BitConverter.ToUInt16(nameLength, 0)];
             if(inputStream.Read(name, 0, BitConverter.ToUInt16(nameLength, 0)) == 0) return null;
             newImageRecord.Active = (active[0] != 0);
             newImageRecord.ThumbnailStored = (thumbnailSaved[0] != 0);
             newImageRecord.CaptureTime = DateTime.FromBinary(BitConverter.ToInt64(dateTime, 0));
-            newImageRecord.CaptureTime = newImageRecord.CaptureTime.AddHours(11);
+            Int16 adjustMinutes = BitConverter.ToInt16(dateTimeAdjustMinutes, 0);
+            newImageRecord.DateTimeAdjustMinutes = adjustMinutes;
             newImageRecord.FileName = System.Text.Encoding.Default.GetString(name);
             return newImageRecord;
         }
