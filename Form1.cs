@@ -571,6 +571,26 @@ namespace LongLapseOrganizer
                 ImageProcessing.startProcessingThread(filenameList4.ToArray());
             }
         }
+
+        private void buttonPicTimeFirst_Click(object sender, EventArgs e)
+        {
+            if(listViewImages.SelectedItems.Count == 1)
+            {
+                ImageRecord ir = (ImageRecord)listViewImages.SelectedItems[0].Tag;
+                numericDayCfgStartHour.Value = ir.CaptureTimeAdjusted.Hour;
+                numericDayCfgStartMinute.Value = ir.CaptureTimeAdjusted.Minute;
+            }
+        }
+
+        private void buttonPicTimeLast_Click(object sender, EventArgs e)
+        {
+            if (listViewImages.SelectedItems.Count == 1)
+            {
+                ImageRecord ir = (ImageRecord)listViewImages.SelectedItems[0].Tag;
+                numericDayCfgEndHour.Value = ir.CaptureTimeAdjusted.Hour;
+                numericDayCfgEndMinute.Value = ir.CaptureTimeAdjusted.Minute;
+            }
+        }
     }
 
 
@@ -627,7 +647,7 @@ namespace LongLapseOrganizer
             {
                 if (SelectedPreviousImageRecord != null)
                 {
-                    if (Math.Abs((SelectedPreviousImageRecord.CaptureTimeAdjusted - ir.CaptureTimeAdjusted).TotalSeconds) > (double)CfgIntervalSec)
+                    if (Math.Abs((SelectedPreviousImageRecord.CaptureTimeAdjusted - ir.CaptureTimeAdjusted).TotalSeconds) >= (double)CfgIntervalSec)
                     {
                         SelectedImages.Add(ir);
                         SelectedPreviousImageRecord = ir;

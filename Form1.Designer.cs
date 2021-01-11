@@ -82,10 +82,12 @@
             this.listViewImages = new System.Windows.Forms.ListView();
             this.colHdrTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colHdrInterval = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colHdrAdjustMinutes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colHdrFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBoxPreview = new System.Windows.Forms.PictureBox();
             this.buttonLoadAllThumbs = new System.Windows.Forms.Button();
-            this.colHdrAdjustMinutes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.buttonPicTimeFirst = new System.Windows.Forms.Button();
+            this.buttonPicTimeLast = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericSkipNthFile)).BeginInit();
             this.groupBoxPicControls.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -208,7 +210,7 @@
             // 
             // richTextBoxLog
             // 
-            this.richTextBoxLog.Location = new System.Drawing.Point(12, 654);
+            this.richTextBoxLog.Location = new System.Drawing.Point(12, 710);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.Size = new System.Drawing.Size(1288, 99);
             this.richTextBoxLog.TabIndex = 6;
@@ -622,6 +624,11 @@
             // 
             this.colHdrInterval.Text = "IntervalSec";
             // 
+            // colHdrAdjustMinutes
+            // 
+            this.colHdrAdjustMinutes.Text = "Min. Offset";
+            this.colHdrAdjustMinutes.Width = 65;
+            // 
             // colHdrFilename
             // 
             this.colHdrFilename.Text = "Filename";
@@ -631,14 +638,14 @@
             // 
             this.pictureBoxPreview.Location = new System.Drawing.Point(931, 348);
             this.pictureBoxPreview.Name = "pictureBoxPreview";
-            this.pictureBoxPreview.Size = new System.Drawing.Size(481, 297);
+            this.pictureBoxPreview.Size = new System.Drawing.Size(522, 345);
             this.pictureBoxPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxPreview.TabIndex = 29;
             this.pictureBoxPreview.TabStop = false;
             // 
             // buttonLoadAllThumbs
             // 
-            this.buttonLoadAllThumbs.Location = new System.Drawing.Point(769, 393);
+            this.buttonLoadAllThumbs.Location = new System.Drawing.Point(769, 413);
             this.buttonLoadAllThumbs.Name = "buttonLoadAllThumbs";
             this.buttonLoadAllThumbs.Size = new System.Drawing.Size(113, 23);
             this.buttonLoadAllThumbs.TabIndex = 30;
@@ -646,16 +653,33 @@
             this.buttonLoadAllThumbs.UseVisualStyleBackColor = true;
             this.buttonLoadAllThumbs.Click += new System.EventHandler(this.buttonLoadAllThumbs_Click);
             // 
-            // colHdrAdjustMinutes
+            // buttonPicTimeFirst
             // 
-            this.colHdrAdjustMinutes.Text = "Min. Offset";
-            this.colHdrAdjustMinutes.Width = 65;
+            this.buttonPicTimeFirst.Location = new System.Drawing.Point(769, 348);
+            this.buttonPicTimeFirst.Name = "buttonPicTimeFirst";
+            this.buttonPicTimeFirst.Size = new System.Drawing.Size(113, 23);
+            this.buttonPicTimeFirst.TabIndex = 31;
+            this.buttonPicTimeFirst.Text = "First Pic Time";
+            this.buttonPicTimeFirst.UseVisualStyleBackColor = true;
+            this.buttonPicTimeFirst.Click += new System.EventHandler(this.buttonPicTimeFirst_Click);
+            // 
+            // buttonPicTimeLast
+            // 
+            this.buttonPicTimeLast.Location = new System.Drawing.Point(769, 377);
+            this.buttonPicTimeLast.Name = "buttonPicTimeLast";
+            this.buttonPicTimeLast.Size = new System.Drawing.Size(113, 23);
+            this.buttonPicTimeLast.TabIndex = 32;
+            this.buttonPicTimeLast.Text = "Last Pic Time";
+            this.buttonPicTimeLast.UseVisualStyleBackColor = true;
+            this.buttonPicTimeLast.Click += new System.EventHandler(this.buttonPicTimeLast_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1441, 765);
+            this.ClientSize = new System.Drawing.Size(1486, 821);
+            this.Controls.Add(this.buttonPicTimeLast);
+            this.Controls.Add(this.buttonPicTimeFirst);
             this.Controls.Add(this.buttonLoadAllThumbs);
             this.Controls.Add(this.pictureBoxPreview);
             this.Controls.Add(this.listViewImages);
@@ -752,6 +776,8 @@
         private System.Windows.Forms.PictureBox pictureBoxPreview;
         private System.Windows.Forms.Button buttonLoadAllThumbs;
         private System.Windows.Forms.ColumnHeader colHdrAdjustMinutes;
+        private System.Windows.Forms.Button buttonPicTimeFirst;
+        private System.Windows.Forms.Button buttonPicTimeLast;
     }
 }
 
